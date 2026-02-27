@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { PrismaClient, Session } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 const app = express();
@@ -149,7 +149,6 @@ app.put("/sessions/:id", async (req, res) => {
         : session.durationSec;
 
     const newStartTime = startTime ? new Date(startTime) : session.startTime;
-
     const newEndTime = new Date(newStartTime.getTime() + durationSec * 1000);
 
     const updated = await prisma.session.update({
@@ -172,11 +171,13 @@ app.put("/sessions/:id", async (req, res) => {
 /* ---------- STATS ---------- */
 
 app.get("/stats", async (_, res) => {
-  const sessions: Session[] = await prisma.session.findMany();
+  const sessions = await prisma.session.findMany();
 
-  // Явно типизируем reduce, чтобы TS не ругался
+  // Используем typeof, чтобы TS понял тип элементов
+  type SessionType = typeof sessions[number];
+
   const totalSeconds = sessions.reduce<number>(
-    (acc, s) => acc + s.durationSec,
+    (acc, s: SessionType) => acc + s.durationSec,
     0
   );
 
