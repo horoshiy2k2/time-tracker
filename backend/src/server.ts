@@ -100,25 +100,6 @@ app.post("/current-session/start", async (req, res) => {
 });
 
 
-app.post("/current-session/start", async (req, res) => {
-  const { categoryId } = req.body;
-
-  const existing = await prisma.currentSession.findFirst();
-  if (existing) {
-    return res.status(400).json({ error: "Session already running" });
-  }
-
-  const session = await prisma.currentSession.create({
-    data: {
-      categoryId: categoryId || null,
-      startTime: new Date(),
-    },
-  });
-
-  res.json(session);
-});
-
-
 app.post("/current-session/stop", async (req, res) => {
   const current = await prisma.currentSession.findFirst();
 
@@ -220,6 +201,10 @@ app.get("/stats", async (_, res) => {
   });
 });
 
-app.listen(4000, () => {
-  console.log("Backend running on http://localhost:4000");
+
+
+const PORT = process.env.PORT || 4000;
+
+app.listen(PORT, () => {
+  console.log(`Backend running on http://localhost:${PORT}`);
 });
