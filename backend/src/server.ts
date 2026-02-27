@@ -173,13 +173,10 @@ app.put("/sessions/:id", async (req, res) => {
 app.get("/stats", async (_, res) => {
   const sessions = await prisma.session.findMany();
 
-  // Используем typeof, чтобы TS понял тип элементов
-  type SessionType = typeof sessions[number];
-
-  const totalSeconds = sessions.reduce<number>(
-    (acc, s: SessionType) => acc + s.durationSec,
-    0
-  );
+  // Явно указываем, что sessions — массив объектов с durationSec
+  const totalSeconds = sessions.reduce((acc: number, s: { durationSec: number }) => {
+    return acc + s.durationSec;
+  }, 0);
 
   const coins = Math.floor(totalSeconds / 3600);
 
