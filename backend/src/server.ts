@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Session } from "@prisma/client";
 
 const prisma = new PrismaClient();
 const app = express();
@@ -40,7 +40,6 @@ app.put("/categories/:id", async (req, res) => {
 
 app.delete("/categories/:id", async (req, res) => {
   try {
-    // Проверяем есть ли связанные сессии
     const sessions = await prisma.session.findMany({
       where: { categoryId: req.params.id },
     });
@@ -71,15 +70,12 @@ app.get("/sessions", async (_, res) => {
   res.json(sessions);
 });
 
-
 app.get("/current-session", async (req, res) => {
   const session = await prisma.currentSession.findFirst({
     include: { category: true },
   });
-
   res.json(session);
 });
-
 
 app.post("/current-session/start", async (req, res) => {
   const { categoryId } = req.body;
@@ -98,7 +94,6 @@ app.post("/current-session/start", async (req, res) => {
 
   res.json(session);
 });
-
 
 app.post("/current-session/stop", async (req, res) => {
   const current = await prisma.currentSession.findFirst();
@@ -129,14 +124,12 @@ app.post("/current-session/stop", async (req, res) => {
   res.json({ success: true });
 });
 
-
 app.delete("/sessions/:id", async (req, res) => {
   await prisma.session.delete({
     where: { id: req.params.id },
   });
   res.json({ success: true });
 });
-
 
 app.put("/sessions/:id", async (req, res) => {
   try {
@@ -150,21 +143,14 @@ app.put("/sessions/:id", async (req, res) => {
       return res.status(404).json({ error: "Session not found" });
     }
 
-    // 1️⃣ Определяем новую длительность
     const durationSec =
       durationMin !== undefined
         ? Math.round(durationMin * 60)
         : session.durationSec;
 
-    // 2️⃣ Определяем новое время старта
-    const newStartTime = startTime
-      ? new Date(startTime)
-      : session.startTime;
+    const newStartTime = startTime ? new Date(startTime) : session.startTime;
 
-    // 3️⃣ Пересчитываем endTime
-    const newEndTime = new Date(
-      newStartTime.getTime() + durationSec * 1000
-    );
+    const newEndTime = new Date(newStartTime.getTime() + durationSec * 1000);
 
     const updated = await prisma.session.update({
       where: { id: req.params.id },
@@ -186,9 +172,10 @@ app.put("/sessions/:id", async (req, res) => {
 /* ---------- STATS ---------- */
 
 app.get("/stats", async (_, res) => {
-  const sessions = await prisma.session.findMany();
+  const sessions: Session[] = await prisma.session.findMany();
 
-  const totalSeconds = sessions.reduce(
+  // Явно типизируем reduce, чтобы TS не ругался
+  const totalSeconds = sessions.reduce<number>(
     (acc, s) => acc + s.durationSec,
     0
   );
@@ -201,7 +188,7 @@ app.get("/stats", async (_, res) => {
   });
 });
 
-
+/* ---------- START SERVER ---------- */
 
 const PORT = process.env.PORT || 4000;
 
