@@ -17,7 +17,7 @@ import {
 
 
 
-const API = "http://localhost:4000";
+const API = import.meta.env.VITE_API_URL;
 
 export default function App() {
   const [editingMinutes, setEditingMinutes] = useState<number>(0);
