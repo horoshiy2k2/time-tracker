@@ -1,0 +1,419 @@
+.inventoryContainer{
+  display:flex;
+  gap:20px;
+  align-items:flex-start;
+  user-select: none;
+}
+
+.inventoryGrid{
+  flex:1;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(120px,1fr));
+  gap:5px;
+}
+
+.inventoryDetail{
+
+  width:260px;
+
+  position:sticky;
+  top:10px;
+
+  height:fit-content;
+
+  border-radius:12px;
+
+  padding:10px;
+  background:#fafafa;
+  border:1px solid #ddd;
+  user-select: none;
+}
+
+.inventoryItem{
+flex:0 0 120px;
+aspect-ratio:1/1;
+
+border-radius:14px;
+
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+
+cursor:pointer;
+
+transition:0.18s;
+padding: 5px 0px;
+
+}
+
+.inventoryItem:hover{
+transform:translateY(-3px);
+box-shadow:0 6px 16px rgba(0,0,0,0.08);
+}
+
+.inventoryItem.selected{
+outline:2px solid #888;
+}
+
+.inventoryEmoji{
+font-size:3.7em;
+margin-bottom:0.2em;
+}
+
+.dropIcon{
+width:70px;
+height:70px;
+margin-bottom:6px;
+}
+
+.colorBlock{
+width:44px;
+height:44px;
+border-radius:8px;
+margin-bottom:6px;
+border:1px solid rgba(0,0,0,0.15);
+}
+
+.inventoryName{
+font-size:0.95em;
+text-align:center;
+}
+
+
+
+.inventoryPlaceholder{
+opacity:0.5;
+text-align:center;
+margin-top:2em;
+}
+
+.inventoryDetail button{
+
+margin-top:1em;
+
+padding:8px 14px;
+
+border-radius:8px;
+border:1px solid #ccc;
+
+cursor:pointer;
+
+transition:0.15s;
+}
+
+.inventoryDetail button:hover{
+background:#f5f5f5;
+}
+
+.inventoryDetail button:active{
+transform:scale(0.95);
+}
+
+
+
+
+
+
+
+
+
+
+
+/* ---------- LOOT POPUP ---------- */
+
+.lootOverlay {
+  position: fixed;
+  inset: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: radial-gradient(circle at center, #ffffff 0%, #ffffff 80%);
+  backdrop-filter: blur(8px);
+
+  z-index: 999;
+}
+
+/* ---------- POPUP CARD ---------- */
+
+.lootCard {
+  min-width: 400px;
+  max-width: 800px;
+  padding: 60px;
+  background: #ffffff;
+  border-radius: 20px;
+  border: 1px solid #cfd6e0;
+  text-align: center;
+  box-shadow: 0 25px 80px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  position: relative;
+  animation: lootAppear 0.5s ease;
+  user-select: none;
+}
+
+/* ---------- APPEAR ---------- */
+
+@keyframes lootAppear {
+  from {
+    transform: scale(0.85) translateY(60px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ---------- CHEST SHAKE ---------- */
+
+.chestShake {
+  font-size: 100px;
+  animation: shake 0.2s ease-in-out infinite;
+}
+
+@keyframes shake {
+  0% { transform: rotate(-8deg); }
+  25% { transform: rotate(8deg); }
+  50% { transform: rotate(-6deg); }
+  75% { transform: rotate(6deg); }
+  100% { transform: rotate(0); }
+}
+
+/* ---------- EXPLOSION ---------- */
+
+.explosion {
+  font-size: 120px;
+  animation: explode 0.3s ease forwards;
+}
+
+@keyframes explode {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.6); opacity: 1; }
+  100% { transform: scale(1) rotate(0deg); }
+}
+
+/* ---------- ITEM ICON ---------- */
+
+.lootEmoji {
+  width: 120px;
+  height: 120px;
+  font-size: 2.4em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 20px auto;
+  animation: itemPop 0.5s ease;
+}
+
+/* item pop animation */
+@keyframes itemPop {
+  0% { transform: scale(0.2); opacity: 0; }
+  50% { transform: scale(1.5); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+/* ---------- COLOR BLOB ---------- */
+
+.colorBlob {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-bottom: 20px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.15);
+}
+
+/* ---------- GLOW BASED ON RARITY ---------- */
+
+.commonGlow {
+  box-shadow: 0 0 20px rgba(128,128,128,0.6);
+}
+.uncommonGlow {
+  box-shadow: 0 0 25px rgba(76,175,80,0.6);
+}
+.rareGlow {
+  box-shadow: 0 0 25px rgba(33,150,243,0.7);
+}
+.epicGlow {
+  box-shadow: 0 0 30px rgba(156,39,176,0.8);
+}
+.legendaryGlow {
+  box-shadow: 0 0 35px rgba(255,193,7,0.9);
+}
+
+/* ---------- RARITY LABEL ---------- */
+
+.lootRarity {
+  margin-top: 8px;
+  font-weight: 700;
+  font-size: 16px;
+  opacity: 0.85;
+}
+
+/* ---------- CLOSE ---------- */
+
+/*.lootClose {
+  position: absolute;
+  right: 25px;
+  top: 25px;
+  font-size: 30px;
+  cursor: pointer;
+  z-index: 1000;
+}*/
+
+/* ---------- FINAL GRID ---------- */
+
+.lootGrid {
+  margin-top: 5px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 25px;
+}
+
+/* ---------- FINAL GRID ITEM ---------- */
+
+.lootGridItem {
+  width: 70px;
+  height: 70px;
+  background: #f8f8f8;
+  border-radius: 14px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-size: 50px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.lootGridItem:hover {
+  transform: scale(1.05);
+}
+
+/* ---------- CENTERED COLOR DROP ICON ---------- */
+
+.lootColorDrop {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+
+/* ---------- REMOVE CLICK TO CONTINUE ---------- */
+/* просто убрал текст в HTML, CSS не нужен */
+
+
+.paintButtons{
+display:flex;
+flex-direction:column;
+gap:2px;
+margin-top:-20px;
+}
+
+.paintButtons button{
+padding:10px 5px;
+border-radius:8px;
+border:1px solid #ccc;
+background:#f5f5f5;
+cursor:pointer;
+transition:0.15s;
+font-size: 15px;
+}
+
+.paintButtons button:hover{
+background:#eaeaea;
+}
+
+
+
+/* ========================= */
+/* NIGHT MODE INVENTORY */
+/* ========================= */
+
+body.night .inventoryDetail{
+  background:#1b1f27;
+  border:1px solid #2a2f3a;
+}
+
+body.night .inventoryItem{
+  /*background:#161a22;*/
+}
+
+body.night .inventoryItem:hover{
+  box-shadow:0 6px 16px rgba(0,0,0,0.6);
+}
+
+body.night .inventoryItem.selected{
+  outline:2px solid #646cff;
+}
+
+body.night .inventoryName{
+  /*color:#e6e6e6;*/
+}
+
+body.night .inventoryPlaceholder{
+  opacity:0.4;
+}
+
+/* ========================= */
+/* INVENTORY BUTTONS */
+/* ========================= */
+
+body.night .inventoryDetail button{
+  background:#1f232b;
+  border:1px solid #333;
+  color:#e6e6e6;
+}
+
+body.night .inventoryDetail button:hover{
+  background:#2a2f3a;
+}
+
+/* ========================= */
+/* PAINT BUTTONS */
+/* ========================= */
+
+body.night .paintButtons button{
+  background:#1f232b;
+  border:1px solid #333;
+  color:#e6e6e6;
+}
+
+body.night .paintButtons button:hover{
+  background:#2a2f3a;
+}
+
+/* ========================= */
+/* LOOT POPUP */
+/* ========================= */
+
+body.night .lootOverlay{
+  background:radial-gradient(circle at center,#0f1115 0%,#0f1115 80%);
+}
+
+body.night .lootCard{
+  background:#1b1f27;
+  border:1px solid #2a2f3a;
+  box-shadow:0 25px 80px rgba(0,0,0,0.6);
+}
+
+/* ========================= */
+/* LOOT GRID */
+/* ========================= */
+
+body.night .lootGridItem{
+  background:#161a22;
+}
+
+/* ========================= */
+/* COLOR BLOB SHADOW FIX */
+/* ========================= */
+
+body.night .colorBlob{
+  box-shadow:0 0 15px rgba(0,0,0,0.6);
+}

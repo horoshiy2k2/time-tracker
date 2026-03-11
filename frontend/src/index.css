@@ -1,21 +1,263 @@
-body {
+:root{
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  --button-color: #646cff;
+
+  /* TIMER THEME */
+
+  --timer-bg: #ffffff;
+  --timer-text: #000000;
+  --timer-button: #646cff;
+}
+
+/* общий фон приложения */
+
+body{
+  background: var(--bg-color);
+  color: var(--text-color);
   margin: 0;
   font-family: Arial, sans-serif;
-  background-color: #f5f5f5;
-  color: #333;
+
+  transition: background 0.3s, color 0.3s;
 }
-input, select {
+
+/* обычные кнопки */
+
+button{
+  margin-left: 0.5em;
+  padding: 0.5em 1em;
+  border-radius: 8px;
+  cursor: pointer;
+
+  /*color: var(--text-color);*/
+  border: none;
+
+  transition: background 0.3s, filter 0.2s;
+}
+
+button:hover{
+  filter: brightness(0.9);
+}
+
+input, select{
   padding: 0.5em;
   margin: 0.5em 0;
   border-radius: 6px;
   border: 1px solid #ccc;
 }
-button {
-  margin-left: 0.5em;
-  padding: 0.5em 1em;
-  border-radius: 8px;
-  cursor: pointer;
-  border: 1px solid #ccc;
-  background-color: #fff;
+
+/* ---------- TIMER PAGE ---------- */
+
+.timer-page{
+  background: var(--timer-bg);
+  color: var(--timer-text);
 }
-button:hover { background-color: #eee; }
+
+/* кнопка таймера */
+
+.timer-page button{
+  background: var(--timer-button);
+  color: white;
+}
+
+/* текст таймера */
+
+.timer-page svg text{
+  fill: var(--timer-text);
+}
+
+/* index.css */
+@keyframes coinFloat {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-30px) scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-60px) scale(1);
+    opacity: 0;
+  }
+}
+
+
+
+/* ========================= */
+/* CATEGORY ITEMS */
+/* ========================= */
+
+.categoryItem{
+  padding:0.6em;
+  margin-bottom:0.5em;
+
+  background:#f9f9f9;
+
+  border-radius:20px;
+
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+
+  transition:0.2s;
+}
+
+/* NIGHT MODE */
+
+body.night .categoryItem{
+  background:#1b1f27;
+}
+
+/* ========================= */
+/* CATEGORY INPUT */
+/* ========================= */
+
+.categoryInput{
+  padding:0.5em;
+  border-radius:8px;
+  margin-right:1em;
+
+  border:1px solid #ccc;
+}
+
+/* NIGHT MODE */
+
+body.night .categoryInput{
+  background:#161a22;
+  border:1px solid #333;
+  color:#e6e6e6;
+}
+
+/* ========================= */
+/* EDIT INPUT */
+/* ========================= */
+
+.categoryEditInput{
+  padding:0.4em;
+  border-radius:6px;
+  margin-right:0.5em;
+
+  border:1px solid #ccc;
+}
+
+/* NIGHT MODE */
+
+body.night .categoryEditInput{
+  background:#161a22;
+  border:1px solid #333;
+  color:#e6e6e6;
+}
+
+
+/* ========================= */
+/* SESSION ITEM */
+/* ========================= */
+
+.sessionItem{
+  display:flex;
+  justify-content:space-between;
+  padding:0.8em;
+  margin:0.5em 0;
+  background:#fafafa;
+  border-radius:20px;
+  flex-direction:column;
+  transition:0.2s;
+}
+
+.sessionItem:hover{
+  transform:translateY(-1px);
+}
+
+/* NIGHT MODE */
+
+body.night .sessionItem{
+  background:#1b1f27;
+}
+
+/* ========================= */
+/* HEADER */
+/* ========================= */
+
+.sessionHeader{
+  display:flex;
+  justify-content:space-between;
+  width:100%;
+}
+
+/* ========================= */
+/* DATE */
+/* ========================= */
+
+.sessionDate{
+  font-size:0.85em;
+  color:#777;
+}
+
+body.night .sessionDate{
+  color:#9aa3b2;
+}
+
+/* ========================= */
+/* BUTTONS */
+/* ========================= */
+
+.sessionButtons{
+  margin-top:0.5em;
+}
+
+/* ========================= */
+/* INPUTS */
+/* ========================= */
+
+.sessionInputSmall{
+  padding:0.5em;
+  border-radius:8px;
+  width:120px;
+  border:1px solid #ccc;
+}
+
+.sessionInputMedium{
+  padding:0.5em;
+  border-radius:8px;
+  width:180px;
+  border:1px solid #ccc;
+}
+
+.sessionSelect{
+  padding:0.5em;
+  border-radius:8px;
+  width:200px;
+  border:1px solid #ccc;
+}
+
+/* NIGHT MODE INPUTS */
+
+body.night .sessionInputSmall,
+body.night .sessionInputMedium,
+body.night .sessionSelect{
+  background:#161a22;
+  border:1px solid #333;
+  color:#e6e6e6;
+}
+
+
+.coinsDisplay {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  padding: 5px 10px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 0px;
+  z-index: 1000;
+  font-size: 35px;
+  color: #000; /* стандартный текст */
+  transition: color 0.3s, background 0.3s;
+}
+
+/* Ночной режим */
+body.night .coinsDisplay {
+  color: #e6e6e6; /* светлый текст на тёмном фоне */
+}

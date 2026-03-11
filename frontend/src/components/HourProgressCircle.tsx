@@ -1,10 +1,11 @@
 import React from "react";
 
 interface Props {
-  seconds: number; // сколько секунд прошло
+  seconds: number;
+  progressColor: string;
 }
 
-export default function HourProgressCircle({ seconds }: Props) {
+export default function HourProgressCircle({ seconds, progressColor }: Props) {
   const radius = 120;
   const stroke = 20;
   const normalizedRadius = radius - stroke / 2;
@@ -25,7 +26,7 @@ export default function HourProgressCircle({ seconds }: Props) {
         cy={radius}
       />
       <circle
-        stroke="#646cff"
+        stroke={progressColor}
         fill="transparent"
         strokeWidth={stroke}
         strokeDasharray={`${circumference} ${circumference}`}

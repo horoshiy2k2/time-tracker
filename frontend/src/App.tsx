@@ -1,8 +1,12 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import axios from "axios";
 import HourProgressCircle from "./components/HourProgressCircle";
+import CoinAnimation from "./components/CoinAnimation";
 import MonthHeatmap from "./components/MonthHeatmap";
-import "./buttons.css";
+import Inventory from "./components/Inventory";
+import Shop from "./components/Shop";
+
+import "./styles/buttons.css";
 import {
   BarChart,
   Bar,
@@ -14,6 +18,10 @@ import {
   Cell,
   ResponsiveContainer,
 } from "recharts";
+import "./styles/shop.css";
+
+
+
 
 
 
@@ -24,7 +32,7 @@ export default function App() {
   const [editingSessionId, setEditingSessionId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
-  const [page, setPage] = useState<"timer" | "statistic" | "settings" | "shop">("timer");
+  const [page, setPage] = useState<"timer" | "statistic" | "settings" | "shop" | "inventory">("timer");
   const [categories, setCategories] = useState<any[]>([]);
   const [sessions, setSessions] = useState<any[]>([]);
   const [stats, setStats] = useState<any>({});
@@ -39,6 +47,17 @@ export default function App() {
   const [editingDate, setEditingDate] = useState("");
   const [editingTime, setEditingTime] = useState("");
   const [loading, setLoading] = useState(true);
+  const [coins, setCoins] = useState(0);
+  const [coinAnimations, setCoinAnimations] = useState<{ id: number; amount: number }[]>([]);
+  const [nightMode, setNightMode] = useState(false);
+
+
+  const [theme, setTheme] = useState({
+    progressColor: "#646cff",
+    textColor: "#333",
+    buttonColor: "#646cff",
+    backgroundColor: "#fff"
+  });
 
   const CATEGORY_COLORS = [
     "#2563eb", // blue
@@ -53,21 +72,32 @@ export default function App() {
     "#ef4444", // red
   ];
 
+  const CHEST_COST: Record<string, number> = {
+    COMMON: 2,
+    UNCOMMON: 4,
+    RARE: 8,
+    EPIC: 16,
+    LEGENDARY: 32,
+  };
+
  const load = async () => {
     try {
       setLoading(true);
 
-      const [c, s, st, cs] = await Promise.all([
+      const [c, s, st, cs, u] = await Promise.all([
         axios.get(API + "/categories"),
         axios.get(API + "/sessions"),
         axios.get(API + "/stats"),
         axios.get(API + "/current-session"),
+        axios.get(API + "/user")
       ]);
 
       setCategories(c.data);
       setSessions(s.data);
       setStats(st.data);
       setCurrentSession(cs.data);
+      setCoins(u.data.coins);
+      loadTheme();
 
     } catch (err) {
       console.error("Load failed:", err);
@@ -75,6 +105,25 @@ export default function App() {
       setLoading(false);
     }
   };
+
+
+  const loadTheme = async () => {
+  try {
+    const res = await axios.get(`${API}/user/theme`);
+    const themeData = res.data; // берём данные темы из ответа
+    setTheme(themeData);
+
+    // Устанавливаем переменную CSS для кнопок
+    if (themeData.buttonColor) {
+      document.documentElement.style.setProperty(
+        "--button-color",
+        themeData.buttonColor
+      );
+    }
+  } catch (err) {
+    console.error("Failed to load theme:", err);
+  }
+};
 
 
   const deleteCategory = async (id: string) => {
@@ -162,13 +211,25 @@ useEffect(() => {
 
 
   const stop = async () => {
-    await axios.post(API + "/current-session/stop");
+  try {
+    const res = await axios.post(API + "/current-session/stop");
+
+    const coinsEarned = res.data.coinsEarned;
+
+    if (coinsEarned > 0) {
+      // добавляем анимацию монет
+      setCoinAnimations(prev => [...prev, { id: Date.now(), amount: coinsEarned }]);
+    }
 
     setCurrentSession(null);
     setElapsedSeconds(0);
 
+    // обновляем состояние с сервера
     load();
-  };
+  } catch (err) {
+    console.error("Failed to stop session", err);
+  }
+};
 
 
   const createCategory = async () => {
@@ -332,17 +393,86 @@ useEffect(() => {
     setEditingSessionId(null);
   };
 
+  const buyChest = async (rarity: string) => {
+    try {
+      await axios.post(API + "/shop/buy-chest", {
+        rarity
+      });
+
+      //alert("Chest purchased!");
+      load(); // чтобы обновились coins и inventory
+      return (200);
+    } catch (err: any) {
+      return (err.message);
+      //alert(err.response?.data?.error || "Purchase failed");
+    }
+  };
+
+
+  const updateAll = async (rarity: string) => {
+      load(); // чтобы обновились coins и inventory
+  };
+
+  const changeCoins = async (amount: number) => {
+    try {
+      const res = await axios.post(API + "/user/change-coins", { amount });
+      setCoins(res.data.coins);
+    } catch (err) {
+      console.error("Failed to change coins:", err);
+    }
+  };
+
+  const toggleNightMode = async () => {
+    const root = document.documentElement;
+
+    const currentBg = getComputedStyle(root).getPropertyValue("--bg-color").trim();
+
+    if (currentBg === "#ffffff") {
+      root.style.setProperty("--bg-color", "#0f1115");
+      root.style.setProperty("--text-color", "#e6e6e6");
+
+      await axios.post(API + "/user/paint", {
+        target: "night"
+      });
+
+    } else {
+      root.style.setProperty("--bg-color", "#ffffff");
+      root.style.setProperty("--text-color", "#000000");
+
+      await axios.post(API + "/user/paint", {
+        target: "reset"
+      });
+    }
+
+    await loadTheme();
+
+    document.body.classList.toggle("night");
+  };
+
+  
+
 
 useEffect(() => {
   load();
 }, []);
 
 
+useEffect(() => {
+  document.documentElement.style.setProperty("--timer-bg", theme.backgroundColor);
+  document.documentElement.style.setProperty("--timer-text", theme.textColor);
+  document.documentElement.style.setProperty("--timer-button", theme.buttonColor);
+}, [theme]);
+
+
+
+
+
+
 
 
 
   return (
-    <div style={{ maxWidth: "800px", margin: "2em auto", padding: "2em", background: "#fff", borderRadius: "16px", boxShadow: "0 2px 12px rgba(0,0,0,0.1)" }}>
+    <div style={{ maxWidth: "800px", margin: "2em auto", padding: "2em", background: "var(--bg-color)", borderRadius: "16px", boxShadow: "0 2px 12px rgba(0,0,0,0.1)" }}>
       <div>
         <div style={{
           display: "flex",
@@ -355,12 +485,23 @@ useEffect(() => {
           <NavButton active={page === "statistic"} onClick={() => setPage("statistic")}>Statistic</NavButton>
           <NavButton active={page === "settings"} onClick={() => setPage("settings")}>Settings</NavButton>
           <NavButton active={page === "shop"} onClick={() => setPage("shop")}>Shop</NavButton>
+          <NavButton active={page === "inventory"} onClick={() => setPage("inventory")}>Inventory</NavButton>
         </div>
 
         {page === "timer" && (
         <>
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-              <HourProgressCircle seconds={elapsedSeconds} />
+          <div className="timer-page" style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+              <HourProgressCircle seconds={elapsedSeconds} progressColor={theme.progressColor}/>
+
+              {coinAnimations.map(ca => (
+                <CoinAnimation
+                  key={ca.id}
+                  amount={ca.amount}
+                  onFinish={() =>
+                    setCoinAnimations(prev => prev.filter(a => a.id !== ca.id))
+                  }
+                />
+              ))}
 
              <button
                 onClick={!currentSession ? start : stop}
@@ -464,23 +605,10 @@ useEffect(() => {
             )}
 
 
-            <div style={{ marginTop: "4em", marginBottom: "2em"}}>Coins: {stats.coins || 0}</div>
-
             <h3 style={{ marginTop: "2em" }}>Sessions</h3>
 
             {sessions.map((s) => (
-              <div
-                key={s.id}
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  padding: "0.8em",
-                  margin: "0.5em 0",
-                  background: "#fafafa",
-                  borderRadius: "20px",
-                  flexDirection: "column",
-                }}
-              >
+              <div key={s.id} className="sessionItem">
                 {editingSessionId === s.id ? (
                   <>
                     {/* Длительность */}
@@ -490,8 +618,7 @@ useEffect(() => {
                       min="1"
                       value={editingMinutes}
                       onChange={(e) => setEditingMinutes(Number(e.target.value))}
-                      style={{ padding: "0.5em", borderRadius: "8px", width: "120px" }}
-                    />
+                      className="sessionInputSmall"                    />
 
                     {/* Категория */}
                     <div style={{ marginTop: "0.8em", marginBottom: "0.5em" }}>Category:</div>
@@ -500,7 +627,7 @@ useEffect(() => {
                       onChange={(e) =>
                         setEditingCategoryId(e.target.value ? e.target.value : null)
                       }
-                      style={{ padding: "0.5em", borderRadius: "8px", width: "200px" }}
+                      className="sessionSelect"
                     >
                       <option value="">No category</option>
                       {categories.map((c) => (
@@ -516,7 +643,7 @@ useEffect(() => {
                       type="date"
                       value={editingDate}
                       onChange={(e) => setEditingDate(e.target.value)}
-                      style={{ padding: "0.5em", borderRadius: "8px", width: "180px" }}
+                      className="sessionInputMedium"
                     />
 
                     {/* Время */}
@@ -525,7 +652,7 @@ useEffect(() => {
                       type="time"
                       value={editingTime}
                       onChange={(e) => setEditingTime(e.target.value)}
-                      style={{ padding: "0.5em", borderRadius: "8px", width: "120px" }}
+                      className="sessionInputSmall"
                     />
 
                     {/* Сохранение */}
@@ -563,11 +690,11 @@ useEffect(() => {
                 ) : (
                   <>
                     {/* Просмотр сессии */}
-                    <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+                    <div className="sessionHeader">
                       <div>
                         {s.category?.name || "No category"} — {(s.durationSec / 3600).toFixed(2)}h
                       </div>
-                      <div style={{ fontSize: "0.85em", color: "#777" }}>
+                      <div className="sessionDate">
                         {/* Выводим в GMT+3 в 24-часовом формате */}
                         {new Date(s.startTime).toLocaleString("ru-RU", {
                           day: "2-digit",
@@ -582,7 +709,7 @@ useEffect(() => {
                     </div>
 
                     {/* Кнопки */}
-                    <div style={{ marginTop: "0.5em" }}>
+                    <div className="sessionButtons">
                       <button
                         onClick={() => {
                           setEditingSessionId(s.id);
@@ -596,7 +723,6 @@ useEffect(() => {
                           setEditingDate(datePart);
                           setEditingTime(timePart.slice(0, 5)); // hh:mm
                         }}
-                        style={{ marginRight: "0.5em" }}
                       >
                         Edit
                       </button>
@@ -622,32 +748,23 @@ useEffect(() => {
           <>
             <h2>Manage Categories</h2>
             <input
+              className="categoryInput"
               value={newCategory}
               onChange={(e) => setNewCategory(e.target.value)}
-              style={{ padding: "0.5em", borderRadius: "8px", marginRight: "1em" }}
             />
             <button onClick={createCategory}>Add</button>
 
+
+
             <div style={{ marginTop: "1.5em" }}>
               {categories.map((c) => (
-                <div
-                  key={c.id}
-                  style={{
-                    padding: "0.6em",
-                    marginBottom: "0.5em",
-                    background: "#f9f9f9",
-                    borderRadius: "20px",
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center"
-                  }}
-                >
+                <div key={c.id} className="categoryItem">
                   {editingId === c.id ? (
                     <>
                       <input
+                        className="categoryEditInput"
                         value={editingName}
                         onChange={(e) => setEditingName(e.target.value)}
-                        style={{ padding: "0.4em", borderRadius: "6px", marginRight: "0.5em" }}
                       />
                       <button onClick={() => updateCategory(c.id)}>Save</button>
                       <button
@@ -681,41 +798,84 @@ useEffect(() => {
                 </div>
               ))}
             </div>
+
+            {/*<button
+              className="shopTestBtn"
+              onClick={() => changeCoins(100)}
+            >
+              +100 coins
+            </button>*/}
+
+            <button
+              className="shopTestBtn"
+              style={{ marginTop: "20px" }}
+              onClick={async () => {
+                if (!confirm("Are you sure? This will delete all items not in users' inventory!")) return;
+
+                try {
+                  const res = await axios.delete(`${API}/inventory/clear-db`);
+                  console.log(res.data);
+                  alert(res.data.message);
+                } catch (err: any) {
+                  console.error(err);
+                  alert(err.response?.data?.error || "Failed to clear DB");
+                }
+              }}
+            >
+              Clear Inventory DB
+            </button>
+
+           <button
+            style={{ marginLeft: "1em" }}
+            onClick={() => toggleNightMode()}
+          >
+            🌑 Toggle Night Mode 
+          </button>
+
+            <button
+              style={{ marginLeft: "1em" }}
+              onClick={async () => {
+
+                await axios.post(`${API}/user/paint`, {
+                  target: "reset"
+                });
+
+                await loadTheme();
+
+              }}
+            >
+              🎨 Reset Theme
+            </button>
+
           </>
         )}
 
 
         {page === "shop" && (
-          <>
-            <h2>Shop</h2>
-            <div style={{ marginTop: "1em" }}>
-              <div style={{
-                padding: "1em",
-                borderRadius: "12px",
-                background: "#f9f9ff",
-                marginBottom: "1em"
-              }}>
-                <h4>🔥 Focus Booster</h4>
-                <p>Cost: 50 coins</p>
-                <button disabled>Buy</button>
-              </div>
-
-              <div style={{
-                padding: "1em",
-                borderRadius: "12px",
-                background: "#f9f9ff"
-              }}>
-                <h4>🎨 Custom Theme</h4>
-                <p>Cost: 120 coins</p>
-                <button disabled>Buy</button>
-              </div>
-            </div>
-          </>
+          <Shop
+            coins={coins}
+            changeCoins={changeCoins}
+            buyChest={buyChest}
+          />
         )}
+
+
+
+        {/* ---------- Coins Display ---------- */}
+        <div className="coinsDisplay">
+          {coins}🪙
+        </div>
+
+        {page === "inventory" && <Inventory updateAll={updateAll}/>}
+
+
       </div>
   </div>
     );
 }
+
+
+
 
 function NavButton({ children, onClick, active }: any) {
   return (
@@ -735,30 +895,3 @@ function NavButton({ children, onClick, active }: any) {
   );
 }
 
-
-const CustomTooltip = ({ active, payload, label }: any) => {
-  if (active && payload && payload.length) {
-    // фильтруем только категории с value > 0
-    const filtered = payload.filter((p: any) => p.value && p.value > 0);
-
-    if (filtered.length === 0) return null;
-
-    return (
-      <div style={{
-        background: "#fff",
-        border: "1px solid #ccc",
-        padding: "0.5em",
-        borderRadius: "6px",
-      }}>
-        {/*<div><strong>{label}</strong></div>*/}
-        {filtered.map((p: any, idx: number) => (
-          <div key={idx} style={{ color: p.color }}>
-            {p.name}: {p.value.toFixed(2)}h
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  return null;
-};

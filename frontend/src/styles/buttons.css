@@ -1,0 +1,143 @@
+:root {
+  --button-color: #646cff; /* основной цвет кнопок */
+}
+
+/* ========================= */
+/* PRIMARY BUTTON (без изменений) */
+/* ========================= */
+.primary-button {
+  padding: 0.8em 2em;
+  font-size: 1.2em;
+  border-radius: 50px;
+  border: none;
+
+  background: linear-gradient(
+    135deg,
+    var(--button-color),
+    color-mix(in srgb, var(--button-color) 80%, black)
+  );
+  color: #fff;
+
+  cursor: pointer;
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--button-color) 20%, transparent);
+
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+
+  user-select: none;
+  margin-bottom: 1em;
+  margin-top: 1em;
+}
+
+.primary-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px color-mix(in srgb, var(--button-color) 30%, transparent);
+}
+
+.primary-button:active:not(:disabled) {
+  transform: scale(0.95);
+  box-shadow: 0 4px 10px color-mix(in srgb, var(--button-color) 20%, transparent);
+  filter: brightness(0.9);
+}
+
+.primary-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* ========================= */
+/* MENU BUTTON */
+/* ========================= */
+.menu-button {
+  padding: 0.6em 1.2em;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 18px;
+  transition: all 0.18s ease-in-out;
+  user-select: none;
+
+  background: var(--button-color);
+  color: #fff;
+  box-shadow: 0 6px 15px color-mix(in srgb, var(--button-color) 20%, transparent);
+}
+
+.menu-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--button-color) 30%, transparent);
+}
+
+.menu-button:active {
+  transform: scale(0.94);
+  box-shadow: 0 4px 10px color-mix(in srgb, var(--button-color) 40%, transparent);
+  filter: brightness(0.9);
+}
+
+/* NIGHT MODE */
+body.night .menu-button {
+  background: #1f232b;
+  color: #e6e6e6;
+  box-shadow: 0 4px 10px color-mix(in srgb, var(--button-color) 20%, transparent);
+}
+
+body.night .menu-button:hover {
+  box-shadow: 0 4px 10px color-mix(in srgb, var(--button-color) 30%, transparent);
+}
+
+body.night .menu-button:active {
+  box-shadow: 0 4px 10px color-mix(in srgb, var(--button-color) 40%, transparent);
+}
+
+/* ========================= */
+/* STAT BUTTON */
+/* ========================= */
+.stat-button {
+  padding: 0.6em 1.2em;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  background: var(--button-color);
+  color: #fff;
+  box-shadow: 0 6px 15px color-mix(in srgb, var(--button-color) 30%, transparent);
+  transition: all 0.2s ease;
+}
+
+.stat-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--button-color) 40%, transparent);
+}
+
+.stat-button.active {
+  background: var(--button-color);
+  color: #fff;
+  box-shadow: 0 6px 15px color-mix(in srgb, var(--button-color) 50%, transparent);
+}
+
+/* NIGHT MODE */
+body.night .stat-button {
+  background: #1f232b;
+  color: #e6e6e6;
+  box-shadow: 0 6px 15px color-mix(in srgb, var(--button-color) 20%, transparent);
+}
+
+body.night .stat-button.active {
+  background: var(--button-color);
+  color: #fff;
+}
+
+/* ========================= */
+/* SELECT */
+/* ========================= */
+select:disabled {
+  opacity: 0.6;
+}
+
+/* NIGHT MODE */
+body.night select {
+  background: #1f232b;
+  color: #e6e6e6;
+  border: 1px solid #333;
+}

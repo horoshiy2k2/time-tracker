@@ -1,0 +1,196 @@
+.shopContainer {
+  margin-top: 1em;
+}
+
+.shopCoins {
+  font-size: 1.2em;
+  font-weight: 600;
+  margin-bottom: 1em;
+}
+
+.shopTestBtn {
+  margin-bottom: 1.4em;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: #f5f5f5;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.shopTestBtn:hover {
+  background: #ececec;
+}
+
+.shopGrid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2em;
+}
+
+.shopItem {
+  flex: 0 0 170px;
+  aspect-ratio: 1/1;
+  padding: 1em;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.2s;
+
+  /* запрещаем выделение текста и эмодзи */
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.shopItem {
+  flex: 0 0 170px;
+  aspect-ratio: 1/1;
+  padding: 1em;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  transition: 0.15s transform, 0.15s box-shadow, 0.15s filter;
+
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+
+  /* Изначальная тень для объема */
+  box-shadow: 0 6px 12px rgba(0,0,0,0.08);
+}
+
+.shopItem:hover {
+  transform: translateY(-4px);
+  filter: brightness(0.95);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.08);
+}
+
+/* ---------- эффект продавливания при клике ---------- */
+.shopItem:active {
+  transform: translateY(2px) scale(0.97);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+  filter: brightness(0.9);
+}
+
+.shopEmoji {
+  font-size: 5.6em;
+  margin-bottom: 0.3em;
+
+  /* эмодзи тоже нельзя выделять */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.shopName {
+  font-size: 1.2em;
+  font-weight: 600;
+}
+
+.shopCost {
+  font-size: 1.5em;
+  opacity: 0.85;
+  margin-top: 0.3em;
+}
+
+/* rarity colors */
+
+.common {
+  background: rgba(120,120,120,0.08);
+  border: 1px solid rgba(120,120,120,0.25);
+  color: #666;
+}
+
+.uncommon {
+  background: rgba(70,160,90,0.08);
+  border: 1px solid rgba(70,160,90,0.25);
+  color: #3f8f52;
+}
+
+.rare {
+  background: rgba(70,110,220,0.08);
+  border: 1px solid rgba(70,110,220,0.25);
+  color: #3f63c9;
+}
+
+.epic {
+  background: rgba(200,70,70,0.08);
+  border: 1px solid rgba(200,70,70,0.25);
+  color: #c24444;
+}
+
+.legendary {
+  background: rgba(240,150,60,0.10);
+  border: 1px solid rgba(240,150,60,0.35);
+  color: #e48c2a;
+  font-weight: 700;
+}
+
+
+/* контейнер уведомлений */
+
+.notifContainer{
+position:fixed;
+top:12px;
+left:12px;
+
+display:flex;
+flex-direction:column;
+gap:8px;
+
+z-index:9999;
+}
+
+/* уведомление */
+
+.notif{
+background:#2f2f2f;
+color:white;
+
+padding:10px 14px;
+border-radius:8px;
+
+display:flex;
+align-items:center;
+gap:10px;
+
+min-width:200px;
+
+box-shadow:0 6px 14px rgba(0,0,0,0.25);
+
+animation:slideIn 0.25s ease;
+}
+
+/* кнопка закрытия */
+
+.notifClose{
+border:none;
+background:none;
+color:white;
+cursor:pointer;
+font-size:14px;
+margin-left:auto;
+}
+
+/* анимация появления */
+
+@keyframes slideIn{
+from{
+opacity:0;
+transform:translateX(-20px);
+}
+to{
+opacity:1;
+transform:translateX(0);
+}
+}

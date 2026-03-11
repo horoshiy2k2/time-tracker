@@ -1,0 +1,208 @@
+/* ========================= */
+/* MIX COLOR GRID */
+/* ========================= */
+
+.mixGrid{
+
+display:grid;
+
+grid-template-columns:repeat(5,1fr);
+
+gap:8px;
+
+margin-top:10px;
+
+max-height:420px;
+
+/*overflow-y:auto;*/
+
+}
+
+/* ========================= */
+/* MIX ITEM */
+/* ========================= */
+
+.mixItem{
+
+aspect-ratio:1/1;
+
+border-radius:14px;
+
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+
+cursor:pointer;
+
+transition:0.18s;
+
+padding: 10px;
+
+}
+
+.mixItem:hover{
+transform:translateY(-3px);
+box-shadow:0 6px 16px rgba(0,0,0,0.08);
+}
+
+.mixItem.selected{
+outline:2px solid #888;
+}
+
+/* ========================= */
+/* ICONS */
+/* ========================= */
+
+.mixEmoji{
+font-size:2.2em;
+margin-bottom:0.1em;
+}
+
+.mixDropIcon{
+width:50px;
+height:50px;
+}
+
+.mixColorBlock{
+width:34px;
+height:34px;
+border-radius:8px;
+border:1px solid rgba(0,0,0,0.15);
+}
+
+/* ========================= */
+/* SELECTED SLOTS */
+/* ========================= */
+
+.mixSlots{
+
+display:grid;
+
+grid-template-columns:repeat(3,1fr);
+
+gap:20px;
+
+margin-top:0px;
+
+}
+
+.mixSlots .mixDropIcon{
+width:80px;
+height:80px;
+}
+
+/* ========================= */
+/* PREVIEW */
+/* ========================= */
+
+.mixPreview{
+
+display:flex;
+
+justify-content:center;
+
+margin-top:18px;
+
+}
+
+.mixPreview .mixColorBlock{
+
+width:80px;
+height:80px;
+border-radius:10px;
+
+}
+
+/* ========================= */
+/* BUTTON */
+/* ========================= */
+
+.mixButton{
+
+margin-top:12px;
+
+padding:10px 16px;
+
+border-radius:8px;
+
+border:1px solid #ccc;
+
+cursor:pointer;
+
+transition:0.15s;
+
+background:#f5f5f5;
+
+}
+
+.mixButton:hover{
+background:#eaeaea;
+}
+
+/* ========================= */
+/* DISABLED DROP */
+/* ========================= */
+
+.mixDisabled{
+
+opacity:0.35;
+
+pointer-events:none;
+
+}
+
+/* ========================= */
+/* NIGHT MODE */
+/* ========================= */
+
+body.night .mixItem:hover{
+box-shadow:0 6px 16px rgba(0,0,0,0.6);
+}
+
+body.night .mixButton{
+background:#1f232b;
+border:1px solid #333;
+color:#e6e6e6;
+}
+
+body.night .mixButton:hover{
+background:#2a2f3a;
+}
+
+/* ========================= */
+/* MIX LAYOUT */
+/* ========================= */
+
+.mixLayout{
+display:grid;
+grid-template-columns:1fr 220px;
+gap:30px;
+align-items:start;
+}
+
+.mixRightPanel{
+display:flex;
+flex-direction:column;
+gap:20px;
+}
+
+/* ---------- RIGHT PANEL SLOTS ---------- */
+.mixSlots {
+  display: flex;            /* вместо grid */
+  flex-direction: column;   /* вертикально */
+  gap: 12px;                /* расстояние между слотами */
+  justify-content: flex-start;
+  align-items: center;
+}
+
+/* уменьшаем размер иконок в слотах */
+.mixSlots .mixItem {
+  width: 70px;
+  height: 70px;
+}
+
+.mixSlots .mixDropIcon {
+  width: 60px;
+  height: 60px;
+}

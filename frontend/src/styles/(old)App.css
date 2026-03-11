@@ -40,3 +40,25 @@
 .read-the-docs {
   color: #888;
 }
+
+
+:root{
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  --button-color: #646cff;
+}
+
+/* фон приложения */
+
+body{
+  background: var(--bg-color);
+  color: var(--text-color);
+}
+
+/* кнопки */
+
+button{
+  background: var(--button-color);
+  color: white;
+  border: none;
+}
